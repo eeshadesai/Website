@@ -1,21 +1,21 @@
 //set up the server
 const express = require( "express" );
 const logger = require("morgan");
+const db = require("./db/db_connection");
 const app = express();
 const port = 8080;
-const db = require("./db/db_connection");
 
 // Configure Express to use EJS
 app.set( "views",  __dirname + "/views");
 app.set( "view engine", "ejs" );
 
+app.use(express.urlencoded({extended: false}));
 // define middleware that logs all incoming requests
 app.use(logger("dev"));
 
 // define middleware that serves static resources in the public directory
 app.use(express.static(__dirname + '/public'));
-// Configure Express to parse URL-encoded POST request bodies (traditional forms)
-app.use( express.urlencoded({ extended: false }) );
+
 
 // define a route for the default home page
 app.get( "/", ( req, res ) => {
@@ -34,7 +34,7 @@ app.get( "/assignments", ( req, res ) => {
         if (error)
             res.status(500).send(error); //Internal Server Error
         else {
-            res.render('assignments',{inventory : results});
+            res.render('assignments',{ inventory : results });
         }
     });
 });
@@ -42,13 +42,13 @@ app.get( "/assignments", ( req, res ) => {
 // define a route for the item detail page
 const read_item_sql = `
     SELECT 
-        class, assignment, date, description 
+        id,class, assignment, date, description 
     FROM
-    stuff
+        stuff
     WHERE
         id = ?
 `
-app.get( "/assignment/details/:id", ( req, res, ) => {
+app.get( "/assignments/assignment_details/:id", ( req, res ) => {
     db.execute(read_item_sql, [req.params.id], (error, results) => {
         if (error)
             res.status(500).send(error); 
@@ -86,7 +86,7 @@ const create_item_sql = `
         (?, ?, ?)
 `
 app.post("/assignments", ( req, res ) => {
-    db.execute(create_item_sql, [req.body.name, req.body.quantity], (error, results) => {
+    db.execute(create_item_sql, [req.body.name, req.body.assignment, req.body.date], (error, results) => {
         if (error)
             res.status(500).send(error); //Internal Server Error
         else {
@@ -108,7 +108,7 @@ const update_item_sql = `
         id = ?
 `
 app.post("/assignments/assignment_details/:id", ( req, res ) => {
-    db.execute(update_item_sql, [req.body.name, req.body.quantity, req.body.description, req.params.id], (error, results) => {
+    db.execute(update_item_sql, [req.body.name, req.body.assignment, req.body.date, req.body.description, req.params.id], (error, results) => {
         if (error)
             res.status(500).send(error); //Internal Server Error
         else {
