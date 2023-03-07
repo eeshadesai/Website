@@ -1,9 +1,23 @@
 //set up the server
 const express = require( "express" );
 const logger = require("morgan");
-const db = require("./db/db_connection");
+const helmet = require("helmet");
+const db = require("./db/db_pool");
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
+
+//Configure Express to use certain HTTP headers for security
+//Explicitly set the CSP to allow certain sources
+app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'cdnjs.cloudflare.com'],
+        styleSrc: ["'self'", 'cdnjs.cloudflare.com', 'fonts.googleapis.com'],
+        fontSrc: ["'self'", 'fonts.googleapis.com']
+      }
+    }
+  })); 
 
 // Configure Express to use EJS
 app.set( "views",  __dirname + "/views");
@@ -42,7 +56,7 @@ app.get( "/assignments", ( req, res ) => {
 // define a route for the item detail page
 const read_item_sql = `
     SELECT 
-        id,class, assignment, date, description 
+        id, class, assignment, date, description 
     FROM
         stuff
     WHERE
