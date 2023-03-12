@@ -12,9 +12,7 @@ app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", 'cdnjs.cloudflare.com'],
-        styleSrc: ["'self'", 'cdnjs.cloudflare.com', 'fonts.googleapis.com'],
-        fontSrc: ["'self'", 'fonts.googleapis.com']
+        scriptSrc: ["'self'", 'cdnjs.cloudflare.com']
       }
     }
   })); 
@@ -39,7 +37,7 @@ app.get( "/", ( req, res ) => {
 // define a route for the stuff inventory page
 const read_stuff_all_sql = `
     SELECT 
-        id, class, assignment, date
+        id, class as classname, assignment, date
     FROM
     stuff
 `
@@ -56,13 +54,13 @@ app.get( "/assignments", ( req, res ) => {
 // define a route for the item detail page
 const read_item_sql = `
     SELECT 
-        id, class, assignment, date, description 
+        id, class as classname, assignment, date, description 
     FROM
         stuff
     WHERE
         id = ?
 `
-app.get( "/assignments/assignment_details/:id", ( req, res ) => {
+app.get( "/assignments/assignmentDetails/:id", ( req, res ) => {
     db.execute(read_item_sql, [req.params.id], (error, results) => {
         if (error)
             res.status(500).send(error); 
@@ -70,7 +68,7 @@ app.get( "/assignments/assignment_details/:id", ( req, res ) => {
             res.status(404).send(`No item found with id = "${req.params.id}"`);
         else {
             let data = results[0];
-            res.render('assignment_details', data);
+            res.render('assignmentDetails', data);
         }
             
     });
@@ -83,7 +81,7 @@ const delete_item_sql = `
     WHERE
         id = ?
 `
-app.get("/assignments/assignment_details/:id/delete", ( req, res ) => {
+app.get("/assignments/assignmentDetails/:id/delete", ( req, res ) => {
     db.execute(delete_item_sql, [req.params.id], (error, results) => {
         if (error)
             res.status(500).send(error); //Internal Server Error
@@ -105,7 +103,7 @@ app.post("/assignments", ( req, res ) => {
             res.status(500).send(error); //Internal Server Error
         else {
             //results.insertId has the primary key (id) of the newly inserted element.
-            res.redirect(`/assignments/assignment_details/${results.insertId}`);
+            res.redirect(`/assignments/assignmentDetails/${results.insertId}`);
         }
     });
 })
@@ -121,12 +119,12 @@ const update_item_sql = `
     WHERE
         id = ?
 `
-app.post("/assignments/assignment_details/:id", ( req, res ) => {
+app.post("/assignments/assignmentDetails/:id", ( req, res ) => {
     db.execute(update_item_sql, [req.body.name, req.body.assignment, req.body.date, req.body.description, req.params.id], (error, results) => {
         if (error)
             res.status(500).send(error); //Internal Server Error
         else {
-            res.redirect(`/assignments/assignment_details/${req.params.id}`);
+            res.redirect(`/assignments/assignmentDetails/${req.params.id}`);
         }
     });
 })

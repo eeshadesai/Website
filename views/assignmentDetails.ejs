@@ -26,7 +26,7 @@
             <table>
                 <tr>
                     <th>Class:</th>
-                    <td><%= class %></td>
+                    <td><%= classname %></td>
                 </tr>
                 <tr>
                     <th>Assignment:</th>
@@ -45,27 +45,26 @@
         </div>
 
         <div class="section" id="stuffControls">
-            <a class="btn-large waves-effect waves-light orange left modal-trigger" href="#assignmentsEdit">
+            <a class="btn-large waves-effect waves-light orange left modal-trigger" href="#assignmentEdit">
                 <i class="material-icons right">edit</i>
                 Edit
             </a>
-            <a class="btn-large waves-effect waves-light red right" href="/assignments/assignment_details/<%= id %>/delete" %>>
-                <i class="material-icons right">delete</i>
-                Delete
+            <a class="btn-large waves-effect waves-light red right" href="/assignments/assignmentDetails/<%= id %>/delete" %>>
+                <i class="material-icons right">delete</i>Delete
             </a>
         </div>
 
 
-        <div class="modal" id="assignmentsEdit">
+        <div class="modal" id="assignmentEdit">
 
             <div class="modal-content">
 
                 <h2>Edit item:</h2>
-                <form method="post" action="/assignments/assignment_details/<%= id%>">
+                <form method="post" action="/assignments/assignmentDetails/<%= id%>">
                     <div class="row">
                         <div class="input-field col s6">
                             <label for="nameInput">Class:</label>
-                            <input type="text" name="name" id="nameInput" class="validate" data-length="32" value="<%= class%>" required>
+                            <input type="text" name="name" id="nameInput" class="validate" data-length="32" value="<%= classname%>" required>
                         </div>
                         <div class="input-field col s6">
                             <label for="quantityInput">Assignment:</label>
@@ -83,7 +82,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn waves-effect waves-light " type="submit">
+                        <button class="btn waves-effect waves-light" type="submit">
                             <i class="material-icons right">send</i>
                             Submit
                         </button>
