@@ -13,6 +13,7 @@ const create_stuff_table_sql = `
         assignment VARCHAR(100) NOT NULL,
         date VARCHAR(50) NOT NULL,
         description VARCHAR(1000) NULL,
+        userid VARCHAR(50) NULL,
         PRIMARY KEY (id)
     );
 
